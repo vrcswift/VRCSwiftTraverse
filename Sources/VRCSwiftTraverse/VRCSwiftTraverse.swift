@@ -522,8 +522,8 @@ public class VRCTraverse {
             
             if m_Inner > tInner {
                 throw VRCTraverseError(
-                    message: "Too small value. (require=" +
-                    "'>=', threshold='\(threshold)')",
+                    message: "Too large value. (require=" +
+                    "'<=', threshold='\(threshold)')",
                     kind: .outOfRangeError, path: m_Path)
             }
         }
@@ -560,8 +560,8 @@ public class VRCTraverse {
             
             if m_Inner >= tInner {
                 throw VRCTraverseError(
-                    message: "Too small value. (require=" +
-                    "'>', threshold='\(threshold)')",
+                    message: "Too large value. (require=" +
+                    "'<', threshold='\(threshold)')",
                     kind: .outOfRangeError, path: m_Path)
             }
         }
