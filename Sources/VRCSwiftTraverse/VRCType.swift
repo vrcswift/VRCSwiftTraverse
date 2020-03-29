@@ -1,11 +1,18 @@
 //
-//  File.swift
-//  
+//  Copyright 2020 The VRC Authors. All rights reserved.
+//  Use of this source code is governed by a BSD-style license that can be
+//  found in the LICENSE.md file.
 //
-//  Created by varme on 2020/3/28.
+
+//
+//  MARK: Imports.
 //
 
 import Foundation
+
+//
+//  MARK: Public functions.
+//
 
 ///
 ///  Check whether if NSNumber value is a integer.

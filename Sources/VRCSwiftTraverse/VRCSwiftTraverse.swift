@@ -1,8 +1,18 @@
+//
+//  Copyright 2020 The VRC Authors. All rights reserved.
+//  Use of this source code is governed by a BSD-style license that can be
+//  found in the LICENSE.md file.
+//
+
+//
 //  MARK: Imports.
+//
 import Foundation
 import SwiftyJSON
 
-//  MARK: Error.
+//
+//  MARK: Public defines.
+//
 
 ///
 ///  Traverse error object.
@@ -31,29 +41,35 @@ extension VRCTraverseError: LocalizedError {
 ///  The traverse type.
 ///
 public enum VRCTraverseType {
-    case numericType
-    case booleanType
-    case stringType
-    case arrayType
-    case dictionaryType
-    case nullType
+    case numeric
+    case boolean
+    case string
+    case array
+    case dictionary
+    case null
 }
 
+//
 //  MARK: Public classes.
+//
 
 ///
 ///  Traverse of JSON object.
 ///
 public class VRCTraverse {
-    //  MARK: Members.
+    //
+    //  MARK: VRCTraverse members.
+    //
     
     //  The inner JSON object.
-    let m_Inner: JSON
+    private let m_Inner: JSON
     
     //  The path.
-    let m_Path: String
+    private let m_Path: String
     
+    //
     //  MARK: VRCTraverse constructor.
+    //
     
     ///
     ///  Constructor with JSON data.
@@ -127,13 +143,15 @@ public class VRCTraverse {
     ///   - inner: The inner object.
     ///   - path: The path.
     ///
-    fileprivate init(inner: JSON, path: String = "/") {
+    private init(inner: JSON, path: String = "/") {
         //  Initialize.
         m_Inner = inner
         m_Path = path
     }
     
+    //
     //  MARK: VRCTraverse private methods.
+    //
 
     ///
     /// Get the sub path with name string.
@@ -142,7 +160,7 @@ public class VRCTraverse {
     ///
     /// - Returns: The sub path.
     ///
-    fileprivate func getSubPath(name: String) -> String {
+    private func getSubPath(name: String) -> String {
         if m_Path.count == 0 || m_Path.hasSuffix("/") {
             return m_Path + name
         } else {
@@ -157,7 +175,7 @@ public class VRCTraverse {
     ///
     ///  - Returns: The sub path.
     ///
-    fileprivate func getSubPath(offset: Int) -> String {
+    private func getSubPath(offset: Int) -> String {
         if m_Path.count == 0 || m_Path.hasSuffix("/") {
             return m_Path + String.init(format: "[%d]", offset)
         } else {
@@ -172,7 +190,7 @@ public class VRCTraverse {
     ///
     /// - Parameter isEqual: The expression.
     ///
-    fileprivate func assertForTypeInvalid(isEqual: Bool) throws {
+    private func assertForTypeInvalid(isEqual: Bool) throws {
         if !isEqual {
             throw VRCTraverseError(
                 message: "Invalid JSON object type.",
@@ -180,7 +198,9 @@ public class VRCTraverse {
         }
     }
     
+    //
     //  MARK: VRCTraverse public methods.
+    //
 
     ///
     /// Check the type of inner object
@@ -191,24 +211,24 @@ public class VRCTraverse {
     ///
     /// - Returns: Self.
     ///
-    public func typeOf(type: VRCTraverseType) throws -> VRCTraverse {
+    public func typeOf(_ type: VRCTraverseType) throws -> VRCTraverse {
         if m_Inner.type == .null {
             return self
         }
         
         //  Check inner type.
         switch type {
-        case .numericType:
+        case .numeric:
             try assertForTypeInvalid(isEqual: m_Inner.type == .number)
-        case .stringType:
+        case .string:
             try assertForTypeInvalid(isEqual: m_Inner.type == .string)
-        case .booleanType:
+        case .boolean:
             try assertForTypeInvalid(isEqual: m_Inner.type == .bool)
-        case .arrayType:
+        case .array:
             try assertForTypeInvalid(isEqual: m_Inner.type == .array)
-        case .dictionaryType:
+        case .dictionary:
             try assertForTypeInvalid(isEqual: m_Inner.type == .dictionary)
-        case .nullType:
+        case .null:
             try assertForTypeInvalid(isEqual: m_Inner.type == .null)
         }
         
@@ -224,9 +244,7 @@ public class VRCTraverse {
     ///
     public func numeric() throws -> VRCTraverse {
         //  Check inner type.
-        if m_Inner.type == .null || m_Inner.type == .number {
-            return self
-        }
+        _ = try self.typeOf(.numeric)
         
         throw VRCTraverseError(
             message: "Value should be a number",
@@ -265,9 +283,7 @@ public class VRCTraverse {
     ///
     public func boolean() throws -> VRCTraverse {
         //  Check type.
-        if m_Inner.type == .null || m_Inner.type == .bool {
-            return self
-        }
+        _ = try self.typeOf(.boolean)
         
         throw VRCTraverseError(
             message: "Value should be a boolean",
@@ -283,13 +299,39 @@ public class VRCTraverse {
     ///
     public func string() throws -> VRCTraverse {
         //  Check type.
-        if m_Inner.type == .null || m_Inner.type == .string {
-            return self
-        }
+        _ = try self.typeOf(.string)
         
         throw VRCTraverseError(
             message: "Value should be a string.",
             kind: .typeError, path: m_Path)
+    }
+    
+    ///
+    ///  Assume that inner object is a array.
+    ///
+    ///  - Throws: Raised if inner object is not array.
+    ///
+    ///  - Returns: Self.
+    ///
+    public func array() throws -> VRCTraverse {
+        //  Check type.
+        _ = try self.typeOf(.array)
+        
+        return self
+    }
+    
+    ///
+    ///  Assume that inner object is a directory.
+    ///
+    ///  - Throws: Raised if inner object is not a directory.
+    ///
+    ///  - Returns: Self.
+    ///
+    public func directory() throws -> VRCTraverse {
+        //  Check type.
+        _ = try self.typeOf(.dictionary)
+        
+        return self
     }
 
     ///
@@ -307,10 +349,7 @@ public class VRCTraverse {
     ///
     public func sub(name: String) throws -> VRCTraverse {
         //  Check type.
-        if m_Inner.type != .dictionary {
-            throw VRCTraverseError(
-                message: "Value should be a dictionary.", kind: .typeError, path: m_Path)
-        }
+        _ = try self.notNull().directory()
         
         //  Sub path.
         let subPath = self.getSubPath(name: name)
@@ -345,11 +384,7 @@ public class VRCTraverse {
     public func optionalSub(
         name: String, defaultValue:Any? = nil) throws -> VRCTraverse {
         //  Check type.
-        if m_Inner.type == .dictionary {
-            throw VRCTraverseError(
-                message: "Value should be a dictionary.",
-                kind: .typeError, path: m_Path)
-        }
+        _ = try self.notNull().directory()
 
         //  Sub path.
         let subPath = self.getSubPath(name: name)
@@ -363,9 +398,9 @@ public class VRCTraverse {
             guard let subInner = JSON(rawValue: defaultValue ?? NSNull()) else {
                 throw VRCTraverseError(
                     message: "Cannot recognize the type of default value.",
-                    kind: .unknownTypeError, path: subPath)
+                    kind: .parameterError, path: subPath)
             }
-            return VRCTraverse(inner: JSON(subInner), path: subPath)
+            return VRCTraverse(inner: subInner, path: subPath)
         }
         
         return VRCTraverse(inner: subInner, path: subPath)
@@ -403,7 +438,7 @@ public class VRCTraverse {
     ///
     public func arrayGetItem(offset: Int) throws -> VRCTraverse {
         //  Check type.
-        _ = try self.notNull().typeOf(type: .arrayType)
+        _ = try self.notNull().array()
         
         //  Check the offset.
         if offset < 0 || offset >= m_Inner.arrayValue.count {
@@ -433,7 +468,7 @@ public class VRCTraverse {
     public func arrayForEach(
         handler: (VRCTraverse) -> Void) throws -> VRCTraverse {
         //  Check type.
-        _ = try self.notNull().typeOf(type: .arrayType)
+        _ = try self.notNull().array()
         
         //  Scan all items.
         for i in 0..<m_Inner.arrayValue.count {
@@ -446,184 +481,493 @@ public class VRCTraverse {
     }
     
     ///
-    ///  Get inner object as unsigned int8.
-    ///
-    ///  - Throws: Raised if inner object is not a integer.
-    ///
-    ///  - Returns: The unsigned int8.
-    ///
-    public func innerAsUInt8() throws -> UInt8 {
-        //  Check type.
-        _ = try self.integer()
-        
-        return m_Inner.uInt8Value
-    }
-    
-    ///
     ///  Get inner object as signed int8.
     ///
-    ///  - Throws: Raised if inner object is not a integer.
+    ///  - Throws: Raised in following situations:
     ///
-    ///  - Returns: The signed int8.
+    ///             - The inner object is a 'NULL'.
+    ///             - The inner object is not a numeric.
+    ///
+    ///  - Returns: The signed int8 value.
     ///
     public func innerAsSInt8() throws -> Int8 {
         //  Check type.
-        _ = try self.integer()
+        _ = try self.notNull().numeric()
         
         return m_Inner.int8Value
     }
     
     ///
-    ///  Get inner object as unsigned int16.
+    ///  Get inner object as optional signed int8.
     ///
-    ///  - Throws: Raised if inner object is not a integer.
+    ///  - Throws: Raised if inner object is not a numeric.
     ///
-    ///  - Returns: The unsigned int16.
+    ///  - Returns: The optional signed int8 value.
     ///
-    public func innerAsUInt16() throws -> UInt16 {
+    public func innerAsOptionalSInt8() throws -> Int8? {
         //  Check type.
-        _ = try self.integer()
+        _ = try self.numeric()
         
-        return m_Inner.uInt16Value
+        return m_Inner.int8
+    }
+    
+    ///
+    ///  Get inner object as unsigned int8.
+    ///
+    ///  - Throws: Raised in following situations:
+    ///
+    ///             - The inner object is a 'NULL'.
+    ///             - The inner object is not a numeric.
+    ///
+    ///  - Returns: The unsigned int8 value.
+    ///
+    public func innerAsUInt8() throws -> UInt8 {
+        //  Check type.
+        _ = try self.notNull().numeric()
+        
+        return m_Inner.uInt8Value
+    }
+    
+    ///
+    ///  Get inner object as optional unsigned int8.
+    ///
+    ///  - Throws: Raised if inner object is not a numeric.
+    ///
+    ///  - Returns: The optional unsigned int8 value.
+    ///
+    public func innerAsOptionalUInt8() throws -> UInt8? {
+        //  Check type.
+        _ = try self.numeric()
+        
+        return m_Inner.uInt8
     }
     
     ///
     ///  Get inner object as signed int16.
     ///
-    ///  - Throws: Raised if inner object is not a integer.
+    ///  - Throws: Raised in following situations:
     ///
-    ///  - Returns: The signed int16.
+    ///             - The inner object is a 'NULL'.
+    ///             - The inner object is not a numeric.
+    ///
+    ///  - Returns: The signed int16 value.
     ///
     public func innerAsSInt16() throws -> Int16 {
         //  Check type.
-        _ = try self.integer()
+        _ = try self.notNull().numeric()
         
         return m_Inner.int16Value
     }
     
     ///
-    ///  Get inner object as unsigned int32.
+    ///  Get inner object as optional signed int16.
     ///
-    ///  - Throws: Raised if inner object is not a integer.
+    ///  - Throws: Raised if inner object is not a numeric.
     ///
-    ///  - Returns: The unsigned int32.
+    ///  - Returns: The optional signed int16 value.
     ///
-    public func innerAsUInt32() throws -> UInt32 {
+    public func innerAsOptionalSInt16() throws -> Int16? {
         //  Check type.
-        _ = try self.integer()
+        _ = try self.numeric()
         
-        return m_Inner.uInt32Value
+        return m_Inner.int16
+    }
+    
+    ///
+    ///  Get inner object as unsigned int16.
+    ///
+    ///  - Throws: Raised in following situations:
+    ///
+    ///             - The inner object is a 'NULL'.
+    ///             - The inner object is not a numeric.
+    ///
+    ///  - Returns: The unsigned int16 value.
+    ///
+    public func innerAsUInt16() throws -> UInt16 {
+        //  Check type.
+        _ = try self.notNull().numeric()
+        
+        return m_Inner.uInt16Value
+    }
+    
+    ///
+    ///  Get inner object as optional unsigned int16.
+    ///
+    ///  - Throws: Raised if inner object is not a numeric.
+    ///
+    ///  - Returns: The optional unsigned int16 value.
+    ///
+    public func innerAsOptionalUInt16() throws -> UInt16? {
+        //  Check type.
+        _ = try self.numeric()
+        
+        return m_Inner.uInt16
     }
     
     ///
     ///  Get inner object as signed int32.
     ///
-    ///  - Throws: Raised if inner object is not a integer.
+    ///  - Throws: Raised in the situations:
     ///
-    ///  - Returns: The signed int32.
+    ///             - The inner object is a 'NULL'
+    ///             - The inner object is not a numeric.
+    ///
+    ///  - Returns: The signed int32 value.
     ///
     public func innerAsSInt32() throws -> Int32 {
         //  Check type.
-        _ = try self.integer()
+        _ = try self.notNull().numeric()
         
         return m_Inner.int32Value
     }
     
     ///
-    ///  Get inner object as unsigned int64.
+    ///  Get inner object as optional signed int32.
     ///
-    ///  - Throws; Raised if inner object is not a integer.
+    ///  - Throws: Raised if inner object is not a numeric.
     ///
-    ///  - Returns: The unsigned int64 value.
+    ///  - Returns: The optional signed int32 value.
     ///
-    public func innerAsUInt64() throws -> UInt64 {
+    public func innerAsOptionalSInt32() throws -> Int32? {
         //  Check type.
-        _ = try self.integer()
+        _ = try self.numeric()
         
-        return m_Inner.uInt64Value
+        return m_Inner.int32
+    }
+    
+    ///
+    ///  Get inner object as unsigned int32.
+    ///
+    ///  - Throws: Raised in following situations:
+    ///
+    ///             - The inner object is a 'NULL'.
+    ///             - The inner object is not a numeric.
+    ///
+    ///  - Returns: The unsigned int32 value.
+    ///
+    public func innerAsUInt32() throws -> UInt32 {
+        //  Check type.
+        _ = try self.notNull().numeric()
+        
+        return m_Inner.uInt32Value
+    }
+    
+    ///
+    ///  Get inner object as optional unsigned int32.
+    ///
+    ///  - Throws: Raised if inner object is not a numeric.
+    ///
+    ///  - Returns: The optional unsigned int32 value.
+    ///
+    public func innerAsOptionalUInt32() throws -> UInt32? {
+        //  Check type.
+        _ = try self.numeric()
+        
+        return m_Inner.uInt32
     }
     
     ///
     ///  Get inner object as signed int64.
     ///
-    ///  - Throws: Raised if inner object is not a integer.
+    ///  - Throws: Raised in following situations:
+    ///
+    ///             - The inner object is a 'NULL'.
+    ///             - The inner object is not a numeric.
     ///
     ///  - Returns: The signed int64 value.
     ///
     public func innerAsSInt64() throws -> Int64 {
         //  Check type.
-        _ = try self.integer()
+        _ = try self.notNull().numeric()
         
         return m_Inner.int64Value
     }
     
     ///
+    ///  Get inner object as optional signed int64.
+    ///
+    ///  - Throws: Raised if inner object is not a numeric.
+    ///
+    ///  - Returns: The optional signed int64 value.
+    ///
+    public func innerAsOptionalSInt64() throws -> Int64? {
+        //  Check type.
+        _ = try self.numeric()
+        
+        return m_Inner.int64
+    }
+    
+    ///
+    ///  Get inner object as unsigned int64.
+    ///
+    ///  - Throws: Raised in following situations:
+    ///
+    ///             - The inner object is a 'NULL'.
+    ///             - The inner object is not a numeric.
+    ///
+    ///  - Returns: The unsigned int64 value.
+    ///
+    public func innerAsUInt64() throws -> UInt64 {
+        //  Check type.
+        _ = try self.notNull().numeric()
+        
+        return m_Inner.uInt64Value
+    }
+    
+    ///
+    ///  Get inner object as optional unsigned int64.
+    ///
+    ///  - Throws; Raised if inner object is not a numeric.
+    ///
+    ///  - Returns: The optional unsigned int64 value.
+    ///
+    public func innerAsOptionalUInt64() throws -> UInt64? {
+        //  Check type.
+        _ = try self.numeric()
+        
+        return m_Inner.uInt64
+    }
+    
+    ///
     ///  Get inner object as signed integer.
     ///
-    ///  - Throws: Raised if inner object is not a integer.
+    ///  - Throws: Raised in following situations:
+    ///
+    ///             - The inner object is a 'NULL'.
+    ///             - The inner object is not a numeric.
     ///
     ///  - Returns: The integer value.
     ///
     public func innerAsInt() throws -> Int {
         //  Check type.
-        _ = try self.integer()
+        _ = try self.notNull().numeric()
         
         return m_Inner.intValue
     }
     
     ///
+    ///  Get inner object as optional signed integer.
+    ///
+    ///  - Throws: Raised if inner object is not a numeric.
+    ///
+    ///  - Returns: The integer value.
+    ///
+    public func innerAsInt() throws -> Int? {
+        //  Check type.
+        _ = try self.numeric()
+        
+        return m_Inner.int
+    }
+    
+    ///
     ///  Get inner object as unsigned integer.
     ///
-    ///  - Throws: Raised if inner object is not a integer.
+    ///  - Throws: Raised in following situations:
+    ///
+    ///             - The inner object is a 'NULL'.
+    ///             - The inner object is not a numeric.
     ///
     ///  - Returns: The unsigned integer value.
     ///
     public func innerAsUInt() throws -> UInt {
         //  Check type.
-        _ = try self.integer()
+        _ = try self.notNull().numeric()
         
         return m_Inner.uIntValue
     }
     
     ///
+    ///  Get inner object as optional unsigned integer.
+    ///
+    ///  - Throws: Raised if inner object is not a numeric.
+    ///
+    ///  - Returns: The optional unsigned integer value.
+    ///
+    public func innerAsUInt() throws -> UInt? {
+        //  Check type.
+        _ = try self.numeric()
+        
+        return m_Inner.uInt
+    }
+    
+    ///
     ///  Get inner object as double.
     ///
-    ///  - Throws: Raised if inner object is not numeric
+    ///  - Throws: Raised in following situations:
+    ///
+    ///             - The inner object is a 'NULL'.
+    ///             - The inner object is not a numeric.
     ///
     ///  - Returns: The double value.
     ///
     public func innerAsDouble() throws -> Double {
         //  Check type.
-        _ = try self.numeric()
+        _ = try self.notNull().numeric()
         
         return m_Inner.doubleValue
     }
     
     ///
+    ///  Get inner object as optional double.
+    ///
+    ///  - Throws: Raised if inner object is not a numeric.
+    ///
+    ///  - Returns: The optional double value.
+    ///
+    public func innerAsDouble() throws -> Double? {
+        //  Check type.
+        _ = try self.notNull().numeric()
+        
+        return m_Inner.double
+    }
+    
+    ///
     ///  Get inner object as float.
     ///
-    ///  - Throws: Raised if inner object is not numeric
+    ///  - Throws: Raised in following situations:
+    ///
+    ///             - The inner object is a 'NULL'.
+    ///             - The inner object is not a numeric.
     ///
     ///  - Returns: The float value.
     ///
     public func innerAsFloat() throws -> Float {
         //  Check type.
-        _ = try self.numeric()
+        _ = try self.notNull().numeric()
         
         return m_Inner.floatValue
     }
     
     ///
-    ///  Get inner objet as string.
+    ///  Get inner object as optional float.
     ///
-    ///  - Throws: Raised if inner object is not string.
+    ///  - Throws: Raised if inner object is not a numeric
+    ///
+    ///  - Returns: The optional float value.
+    ///
+    public func innerAsOptionalFloat() throws -> Float? {
+        //  Check type.
+        _ = try self.numeric()
+        
+        return m_Inner.float
+    }
+    
+    ///
+    ///  Get inner object as string.
+    ///
+    ///  - Throws: Raised in following situations:
+    ///
+    ///             - The inner object is a 'NULL'.
+    ///             - The inner object is not a numeric.
     ///
     ///  - Returns: The string value.
     ///
     public func innerAsString() throws -> String {
         //  Check type.
-        _ = try self.string()
+        _ = try self.notNull().string()
         
         return m_Inner.stringValue
+    }
+    
+    ///
+    ///  Get inner object as optional string.
+    ///
+    ///  - Throws: Raised if inner object is not a string.
+    ///
+    ///  - Returns: The optional string value.
+    ///
+    public func innerAsOptionalString() throws -> String? {
+        //  Check type.
+        _ = try self.string()
+        
+        return m_Inner.string
+    }
+    
+    ///
+    ///  Get inner object as boolean.
+    ///
+    ///  - Throws: Raised in following situations:
+    ///
+    ///             - The inner object is a 'NULL'.
+    ///             - The inner object is not a numeric.
+    ///
+    ///  - Returns: The boolean value.
+    ///
+    public func innerAsBoolean() throws -> Bool {
+        //  Check type.
+        _ = try self.notNull().boolean()
+        
+        return m_Inner.boolValue
+    }
+
+    ///
+    ///  Get inner object as optional boolean.
+    ///
+    ///  - Throws: Raised if inner object is not a numeric.
+    ///
+    ///  - Returns: The optional boolean value.
+    ///
+    public func innerAsOptionalBoolean() throws -> Bool? {
+        //  Check type.
+        _ = try self.boolean()
+        
+        return m_Inner.bool
+    }
+
+    ///
+    ///  Get inner object.
+    ///
+    ///  - Throws: Raised in the situations:
+    ///
+    ///             - It's not supported for the type.
+    ///             - Cannot get value as target type.
+    ///
+    ///  - Returns: The value.
+    ///
+    public func inner<T>() throws -> T {
+        if type(of: T.self) == Int8.Type.self {
+            return try self.innerAsSInt8() as! T
+        } else if type(of: T.self) == Int8?.Type.self {
+            return try self.innerAsOptionalSInt8() as! T
+        } else if type(of: T.self) == UInt8.Type.self {
+            return try self.innerAsUInt8() as! T
+        } else if type(of: T.self) == UInt8?.Type.self {
+            return try self.innerAsOptionalUInt8() as! T
+        } else if type(of: T.self) == Int16.Type.self {
+            return try self.innerAsSInt16() as! T
+        } else if type(of: T.self) == Int16?.Type.self {
+            return try self.innerAsOptionalSInt16() as! T
+        } else if type(of: T.self) == UInt16.Type.self {
+            return try self.innerAsUInt16() as! T
+        } else if type(of: T.self) == UInt16?.Type.self {
+            return try self.innerAsOptionalUInt16() as! T
+        } else if type(of: T.self) == Int32.Type.self {
+            return try self.innerAsSInt32() as! T
+        } else if type(of: T.self) == Int32?.Type.self {
+            return try self.innerAsOptionalSInt32() as! T
+        } else if type(of: T.self) == UInt32.Type.self {
+            return try self.innerAsUInt32() as! T
+        } else if type(of: T.self) == UInt32?.Type.self {
+            return try self.innerAsOptionalUInt32() as! T
+        } else if type(of: T.self) == Int64.Type.self {
+            return try self.innerAsSInt64() as! T
+        } else if type(of: T.self) == Int64?.Type.self {
+            return try self.innerAsOptionalSInt64() as! T
+        } else if type(of: T.self) == UInt64.Type.self {
+            return try self.innerAsUInt64() as! T
+        } else if type(of: T.self) == UInt64?.Type.self {
+            return try self.innerAsOptionalUInt64() as! T
+        } else if type(of: T.self) == String.Type.self {
+            return try self.innerAsString() as! T
+        } else if type(of: T.self) == String?.Type.self {
+            return try self.innerAsOptionalString() as! T
+        } else if type(of: T.self) == Bool.Type.self {
+            return try self.innerAsBoolean() as! T
+        } else if type(of: T.self) == Bool?.Type.self {
+            return try self.innerAsOptionalBoolean() as! T
+        } else {
+            throw VRCTraverseError(message: "Cannot recognize the type.",
+                kind: .unknownTypeError, path: m_Path)
+        }
     }
 }

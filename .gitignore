@@ -1,7 +1,8 @@
-# Created by https://www.gitignore.io/api/swift,xcode,Cobjective-c,osx
-# Edit at https://www.gitignore.io/?templates=swift,xcode,Cobjective-c,osx
-
-#!! ERROR: cobjective-c is undefined. Use list command to see defined gitignore types !!#
+#
+#  Copyright 2020 The VRC Authors. All rights reserved.
+#  Use of this source code is governed by a BSD-style license that can be
+#  found in the LICENSE.md file.
+#
 
 ### OSX ###
 # General
