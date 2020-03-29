@@ -612,14 +612,14 @@ public class VRCTraverse {
     ///  - Returns: Self.
     ///
     public func arrayForEach(
-        _ handler: (VRCTraverse) -> Void) throws -> VRCTraverse {
+        _ handler: (VRCTraverse) throws -> Void) throws -> VRCTraverse {
         //  Check type.
         _ = try self.notNull().array()
         
         //  Scan all items.
         for i in 0..<m_Inner.arrayValue.count {
             let newInner = m_Inner[i]
-            handler(VRCTraverse(
+            try handler(VRCTraverse(
                 inner: newInner, path: self.getSubPath(offset: i)))
         }
         
