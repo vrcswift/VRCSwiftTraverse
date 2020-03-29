@@ -9,6 +9,7 @@
 //
 
 import Foundation
+import SwiftyJSON
 
 //
 //  MARK: Public functions.
@@ -19,7 +20,7 @@ import Foundation
 ///
 ///  - Parameter val: The value.
 ///
-func isNSNumberInteger(val: NSNumber) -> Bool {
+func IsNSNumberInteger(val: NSNumber) -> Bool {
     switch CFNumberGetType(val) {
     case .sInt8Type:
         return true

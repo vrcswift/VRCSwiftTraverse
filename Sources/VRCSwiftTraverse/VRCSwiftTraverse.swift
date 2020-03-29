@@ -22,7 +22,7 @@ public struct VRCTraverseError: Swift.Error {
         case parameterError
         case typeError
         case keyNotFindError
-        case unknownTypeError
+        case invalidTypeError
         case outOfRangeError
     }
         
@@ -236,9 +236,9 @@ public class VRCTraverse {
     }
 
     ///
-    ///  Assume that inner object is numeric.
+    ///  Assume that inner object is a numeric.
     ///
-    ///  - Throws: Raised if inner object is not numeric.
+    ///  - Throws: Raised if inner object is not a numeric.
     ///
     ///  - Returns: Self.
     ///
@@ -246,15 +246,13 @@ public class VRCTraverse {
         //  Check inner type.
         _ = try self.typeOf(.numeric)
         
-        throw VRCTraverseError(
-            message: "Value should be a number",
-            kind: .typeError, path: m_Path)
+        return self
     }
     
     ///
-    ///  Assume that inner object is integer.
+    ///  Assume that inner object is a integer.
     ///
-    ///  - Throws: Raised if inner object is not integer.
+    ///  - Throws: Raised if inner object is not a integer.
     ///
     ///  - Returns: Self.
     ///
@@ -265,7 +263,7 @@ public class VRCTraverse {
         
         //  Check inner type.
         if m_Inner.type == .number &&
-            isNSNumberInteger(val: m_Inner.numberValue) {
+            IsNSNumberInteger(val: m_Inner.numberValue) {
             return self
         }
         
@@ -275,9 +273,9 @@ public class VRCTraverse {
     }
 
     ///
-    ///  Assume that inner object is boolean.
+    ///  Assume that inner object is a boolean.
     ///
-    ///  - Throws: Raised if inner object is not boolean.
+    ///  - Throws: Raised if inner object is not a boolean.
     ///
     ///  - Returns: Self.
     ///
@@ -285,15 +283,13 @@ public class VRCTraverse {
         //  Check type.
         _ = try self.typeOf(.boolean)
         
-        throw VRCTraverseError(
-            message: "Value should be a boolean",
-            kind: .typeError, path: m_Path)
+        return self
     }
     
     ///
     ///  Assume that inner object is a string.
     ///
-    ///  - Throws: Raised if inner object is not string.
+    ///  - Throws: Raised if inner object is not a string.
     ///
     ///  - Returns: Self.
     ///
@@ -301,15 +297,13 @@ public class VRCTraverse {
         //  Check type.
         _ = try self.typeOf(.string)
         
-        throw VRCTraverseError(
-            message: "Value should be a string.",
-            kind: .typeError, path: m_Path)
+        return self
     }
     
     ///
     ///  Assume that inner object is a array.
     ///
-    ///  - Throws: Raised if inner object is not array.
+    ///  - Throws: Raised if inner object is not a array.
     ///
     ///  - Returns: Self.
     ///
@@ -347,7 +341,7 @@ public class VRCTraverse {
     ///
     ///  - Returns: Traverse object of sub item
     ///
-    public func sub(name: String) throws -> VRCTraverse {
+    public func sub(_ name: String) throws -> VRCTraverse {
         //  Check type.
         _ = try self.notNull().directory()
         
@@ -382,7 +376,7 @@ public class VRCTraverse {
     ///  - Returns: Traverse object of sub item.
     ///
     public func optionalSub(
-        name: String, defaultValue:Any? = nil) throws -> VRCTraverse {
+        _ name: String, defaultValue:Any? = nil) throws -> VRCTraverse {
         //  Check type.
         _ = try self.notNull().directory()
 
@@ -422,6 +416,158 @@ public class VRCTraverse {
         
         return self
     }
+    
+    ///
+    ///  Set minimum value threshold for inner object.
+    ///
+    ///  - Note:
+    ///         What is expected: inner >= threshold.
+    ///
+    ///  - Throws: Raised in following situations:
+    ///
+    ///             - The inner object and threshold are of different types.
+    ///             - 'inner' < 'threshold'.
+    ///
+    ///  - Parameter threshold: The threshold.
+    ///
+    ///  - Returns: Self.
+    ///
+    public func min(_ threshold: Any) throws -> VRCTraverse {
+        //  Check type.
+        if m_Inner.type != .null {
+            //  Threshold inner.
+            let tInner = JSON(threshold)
+            
+            if tInner.type != m_Inner.type {
+                throw VRCTraverseError(
+                    message: "Inconsistent types.",
+                    kind: .parameterError, path: m_Path)
+            }
+            
+            if m_Inner < tInner {
+                throw VRCTraverseError(
+                    message: "Too small value. (require=" +
+                    "'>=', threshold='\(threshold)')",
+                    kind: .outOfRangeError, path: m_Path)
+            }
+        }
+        
+        return self
+    }
+    
+    ///
+    ///  Set exclusive minimum value threshold for inner object.
+    ///
+    ///  - Note:
+    ///         What is expected: inner > threshold.
+    ///
+    ///  - Throws: Raised in following situations:
+    ///
+    ///             - The inner object and threshold are of different types.
+    ///             - 'inner' <= 'threshold'.
+    ///
+    ///  - Parameter threshold: The threshold.
+    ///
+    ///  - Returns: Self.
+    ///
+    public func minExclusive(_ threshold: Any) throws -> VRCTraverse {
+        //  Check type.
+        if m_Inner.type != .null {
+            //  Threshold inner.
+            let tInner = JSON(threshold)
+            
+            if tInner.type != m_Inner.type {
+                throw VRCTraverseError(
+                    message: "Inconsistent types.",
+                    kind: .parameterError, path: m_Path)
+            }
+            
+            if m_Inner <= tInner {
+                throw VRCTraverseError(
+                    message: "Too small value. (require=" +
+                    "'>', threshold='\(threshold)')",
+                    kind: .outOfRangeError, path: m_Path)
+            }
+        }
+        
+        return self
+    }
+    
+    ///
+    ///  Set maximum value threshold for inner object.
+    ///
+    ///  - Note:
+    ///         What is expected: inner <= threshold.
+    ///
+    ///  - Throws: Raised in following situations:
+    ///
+    ///             - The inner object and threshold are of different types.
+    ///             - 'inner' > 'threshold'.
+    ///
+    ///  - Parameter threshold: The threshold.
+    ///
+    ///  - Returns: Self.
+    ///
+    public func max(_ threshold: Any) throws -> VRCTraverse {
+        //  Check type.
+        if m_Inner.type != .null {
+            //  Threshold inner.
+            let tInner = JSON(threshold)
+            
+            if tInner.type != m_Inner.type {
+                throw VRCTraverseError(
+                    message: "Inconsistent types.",
+                    kind: .parameterError, path: m_Path)
+            }
+            
+            if m_Inner > tInner {
+                throw VRCTraverseError(
+                    message: "Too small value. (require=" +
+                    "'>=', threshold='\(threshold)')",
+                    kind: .outOfRangeError, path: m_Path)
+            }
+        }
+        
+        return self
+    }
+    
+    ///
+    ///  Set exclusive maximum value threshold for inner object.
+    ///
+    ///  - Note:
+    ///         What is expected: inner < threshold.
+    ///
+    ///  - Throws: Raised in following situations:
+    ///
+    ///             - The inner object and threshold are of different types.
+    ///             - 'inner' >= 'threshold'.
+    ///
+    ///  - Parameter threshold: The threshold.
+    ///
+    ///  - Returns: Self.
+    ///
+    public func maxExclusive(_ threshold: Any) throws -> VRCTraverse {
+        //  Check type.
+        if m_Inner.type != .null {
+            //  Threshold inner.
+            let tInner = JSON(threshold)
+            
+            if tInner.type != m_Inner.type {
+                throw VRCTraverseError(
+                    message: "Inconsistent types.",
+                    kind: .parameterError, path: m_Path)
+            }
+            
+            if m_Inner >= tInner {
+                throw VRCTraverseError(
+                    message: "Too small value. (require=" +
+                    "'>', threshold='\(threshold)')",
+                    kind: .outOfRangeError, path: m_Path)
+            }
+        }
+        
+        return self
+    }
 
     ///
     ///  Get item of array.
@@ -436,7 +582,7 @@ public class VRCTraverse {
     ///
     ///  - Returns: Traverse object of item.
     ///
-    public func arrayGetItem(offset: Int) throws -> VRCTraverse {
+    public func arrayGetItem(_ offset: Int) throws -> VRCTraverse {
         //  Check type.
         _ = try self.notNull().array()
         
@@ -466,7 +612,7 @@ public class VRCTraverse {
     ///  - Returns: Self.
     ///
     public func arrayForEach(
-        handler: (VRCTraverse) -> Void) throws -> VRCTraverse {
+        _ handler: (VRCTraverse) -> Void) throws -> VRCTraverse {
         //  Check type.
         _ = try self.notNull().array()
         
@@ -967,7 +1113,7 @@ public class VRCTraverse {
             return try self.innerAsOptionalBoolean() as! T
         } else {
             throw VRCTraverseError(message: "Cannot recognize the type.",
-                kind: .unknownTypeError, path: m_Path)
+                kind: .invalidTypeError, path: m_Path)
         }
     }
 }
