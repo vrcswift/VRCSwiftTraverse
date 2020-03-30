@@ -4,6 +4,9 @@ import PackageDescription
 
 let package = Package(
     name: "VRCSwiftTraverse",
+    platforms: [
+        .macOS(.v10_10), .iOS(.v8)
+    ],
     products: [
         .library(
             name: "VRCSwiftTraverse",
@@ -21,5 +24,6 @@ let package = Package(
         .testTarget(
             name: "VRCSwiftTraverseTests",
             dependencies: ["VRCSwiftTraverse"]),
-    ]
+    ],
+    swiftLanguageVersions: [.v5]
 )

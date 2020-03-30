@@ -884,7 +884,7 @@ public class VRCTraverse {
     ///
     ///  - Returns: The integer value.
     ///
-    public func innerAsInt() throws -> Int {
+    public func innerAsSInt() throws -> Int {
         //  Check type.
         _ = try self.notNull().numeric()
         
@@ -898,7 +898,7 @@ public class VRCTraverse {
     ///
     ///  - Returns: The integer value.
     ///
-    public func innerAsInt() throws -> Int? {
+    public func innerAsOptionalSInt() throws -> Int? {
         //  Check type.
         _ = try self.numeric()
         
@@ -929,7 +929,7 @@ public class VRCTraverse {
     ///
     ///  - Returns: The optional unsigned integer value.
     ///
-    public func innerAsUInt() throws -> UInt? {
+    public func innerAsOptionalUInt() throws -> UInt? {
         //  Check type.
         _ = try self.numeric()
         
@@ -960,9 +960,9 @@ public class VRCTraverse {
     ///
     ///  - Returns: The optional double value.
     ///
-    public func innerAsDouble() throws -> Double? {
+    public func innerAsOptionalDouble() throws -> Double? {
         //  Check type.
-        _ = try self.notNull().numeric()
+        _ = try self.numeric()
         
         return m_Inner.double
     }
