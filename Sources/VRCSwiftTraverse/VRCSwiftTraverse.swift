@@ -78,13 +78,14 @@ public class VRCTraverse {
     ///
     ///  - Parameters:
     ///    - data: The data.
-    ///    - path: The path.
     ///    - opt: The JSON serialization reading options. Default is '[]'.
+    ///    - path: The path.
     ///
-    init(data: Data, path: String = "/",
-        options opt: JSONSerialization.ReadingOptions = []) throws {
+    init(data: Data,
+        options: JSONSerialization.ReadingOptions = [],
+        path: String = "/") throws {
         //  Build JSON object.
-        m_Inner = try JSON(data: data, options: opt)
+        m_Inner = try JSON(data: data, options: options)
         
         //  Initialize path.
         m_Path = path
@@ -203,9 +204,9 @@ public class VRCTraverse {
     //
 
     ///
-    /// Check the type of inner object
+    /// Check whether inner object matches this type.
     ///
-    /// - Throws: Raised if inner object is not type.
+    /// - Throws: Raised if inner object does not match this type.
     ///
     /// - Parameter type: The type.
     ///
@@ -401,9 +402,9 @@ public class VRCTraverse {
     }
     
     ///
-    ///  Assume that inner object is not 'NULL'.
+    ///  Assume that inner object is not a 'NULL'.
     ///
-    ///  - Throws: Raised if inner object is 'NULL'.
+    ///  - Throws: Raised if inner object is a 'NULL'.
     ///
     ///  - Returns: Self.
     ///
@@ -574,8 +575,8 @@ public class VRCTraverse {
     ///
     ///  - Throws: Raised in the following situations:
     ///
-    ///             - The inner object is 'NULL'.
-    ///             - The inner object is not array.
+    ///             - The inner object is a 'NULL'.
+    ///             - The inner object is not an array.
     ///             - The offset is out of range.
     ///
     ///  - Parameter offset: The offset of item within array.
@@ -604,7 +605,7 @@ public class VRCTraverse {
     ///
     ///  - Throws: Raised in following situations:
     ///
-    ///             - The inner object is 'NULL'.
+    ///             - The inner object is a 'NULL'.
     ///             - The inner object is not an array.
     ///
     ///  - Parameter handler: The callback.
@@ -627,14 +628,14 @@ public class VRCTraverse {
     }
     
     ///
-    ///  Get inner object as signed int8.
+    ///  Get inner object as a signed 8-bit integer.
     ///
     ///  - Throws: Raised in following situations:
     ///
     ///             - The inner object is a 'NULL'.
     ///             - The inner object is not a numeric.
     ///
-    ///  - Returns: The signed int8 value.
+    ///  - Returns: The signed 8-bit integer.
     ///
     public func innerAsSInt8() throws -> Int8 {
         //  Check type.
@@ -644,7 +645,7 @@ public class VRCTraverse {
     }
     
     ///
-    ///  Get inner object as optional signed int8.
+    ///  Get inner object as an optional signed int8.
     ///
     ///  - Throws: Raised if inner object is not a numeric.
     ///
@@ -658,7 +659,7 @@ public class VRCTraverse {
     }
     
     ///
-    ///  Get inner object as unsigned int8.
+    ///  Get inner object as  an unsigned int8.
     ///
     ///  - Throws: Raised in following situations:
     ///
@@ -675,7 +676,7 @@ public class VRCTraverse {
     }
     
     ///
-    ///  Get inner object as optional unsigned int8.
+    ///  Get inner object as  an optional unsigned int8.
     ///
     ///  - Throws: Raised if inner object is not a numeric.
     ///
@@ -689,7 +690,7 @@ public class VRCTraverse {
     }
     
     ///
-    ///  Get inner object as signed int16.
+    ///  Get inner object as a signed int16.
     ///
     ///  - Throws: Raised in following situations:
     ///
@@ -706,7 +707,7 @@ public class VRCTraverse {
     }
     
     ///
-    ///  Get inner object as optional signed int16.
+    ///  Get inner object as an optional signed int16.
     ///
     ///  - Throws: Raised if inner object is not a numeric.
     ///
@@ -720,7 +721,7 @@ public class VRCTraverse {
     }
     
     ///
-    ///  Get inner object as unsigned int16.
+    ///  Get inner object as an unsigned int16.
     ///
     ///  - Throws: Raised in following situations:
     ///
@@ -737,7 +738,7 @@ public class VRCTraverse {
     }
     
     ///
-    ///  Get inner object as optional unsigned int16.
+    ///  Get inner object as an optional unsigned int16.
     ///
     ///  - Throws: Raised if inner object is not a numeric.
     ///
@@ -751,7 +752,7 @@ public class VRCTraverse {
     }
     
     ///
-    ///  Get inner object as signed int32.
+    ///  Get inner object as a signed int32.
     ///
     ///  - Throws: Raised in the situations:
     ///
@@ -768,7 +769,7 @@ public class VRCTraverse {
     }
     
     ///
-    ///  Get inner object as optional signed int32.
+    ///  Get inner object as an optional signed int32.
     ///
     ///  - Throws: Raised if inner object is not a numeric.
     ///
@@ -782,7 +783,7 @@ public class VRCTraverse {
     }
     
     ///
-    ///  Get inner object as unsigned int32.
+    ///  Get inner object as an unsigned int32.
     ///
     ///  - Throws: Raised in following situations:
     ///
@@ -799,7 +800,7 @@ public class VRCTraverse {
     }
     
     ///
-    ///  Get inner object as optional unsigned int32.
+    ///  Get inner object as an optional unsigned int32.
     ///
     ///  - Throws: Raised if inner object is not a numeric.
     ///
@@ -813,7 +814,7 @@ public class VRCTraverse {
     }
     
     ///
-    ///  Get inner object as signed int64.
+    ///  Get inner object as a signed int64.
     ///
     ///  - Throws: Raised in following situations:
     ///
@@ -830,7 +831,7 @@ public class VRCTraverse {
     }
     
     ///
-    ///  Get inner object as optional signed int64.
+    ///  Get inner object as an optional signed int64.
     ///
     ///  - Throws: Raised if inner object is not a numeric.
     ///
@@ -844,7 +845,7 @@ public class VRCTraverse {
     }
     
     ///
-    ///  Get inner object as unsigned int64.
+    ///  Get inner object as an unsigned int64.
     ///
     ///  - Throws: Raised in following situations:
     ///
@@ -861,7 +862,7 @@ public class VRCTraverse {
     }
     
     ///
-    ///  Get inner object as optional unsigned int64.
+    ///  Get inner object as an optional unsigned int64.
     ///
     ///  - Throws; Raised if inner object is not a numeric.
     ///
@@ -875,7 +876,7 @@ public class VRCTraverse {
     }
     
     ///
-    ///  Get inner object as signed integer.
+    ///  Get inner object as a signed integer.
     ///
     ///  - Throws: Raised in following situations:
     ///
@@ -892,7 +893,7 @@ public class VRCTraverse {
     }
     
     ///
-    ///  Get inner object as optional signed integer.
+    ///  Get inner object as an optional signed integer.
     ///
     ///  - Throws: Raised if inner object is not a numeric.
     ///
@@ -906,7 +907,7 @@ public class VRCTraverse {
     }
     
     ///
-    ///  Get inner object as unsigned integer.
+    ///  Get inner object as an unsigned integer.
     ///
     ///  - Throws: Raised in following situations:
     ///
@@ -923,7 +924,7 @@ public class VRCTraverse {
     }
     
     ///
-    ///  Get inner object as optional unsigned integer.
+    ///  Get inner object as an optional unsigned integer.
     ///
     ///  - Throws: Raised if inner object is not a numeric.
     ///
@@ -937,7 +938,7 @@ public class VRCTraverse {
     }
     
     ///
-    ///  Get inner object as double.
+    ///  Get inner object as a double.
     ///
     ///  - Throws: Raised in following situations:
     ///
@@ -954,7 +955,7 @@ public class VRCTraverse {
     }
     
     ///
-    ///  Get inner object as optional double.
+    ///  Get inner object as an optional double.
     ///
     ///  - Throws: Raised if inner object is not a numeric.
     ///
@@ -968,7 +969,7 @@ public class VRCTraverse {
     }
     
     ///
-    ///  Get inner object as float.
+    ///  Get inner object as a float.
     ///
     ///  - Throws: Raised in following situations:
     ///
@@ -985,7 +986,7 @@ public class VRCTraverse {
     }
     
     ///
-    ///  Get inner object as optional float.
+    ///  Get inner object as  anoptional float.
     ///
     ///  - Throws: Raised if inner object is not a numeric
     ///
@@ -999,12 +1000,12 @@ public class VRCTraverse {
     }
     
     ///
-    ///  Get inner object as string.
+    ///  Get inner object as a string.
     ///
     ///  - Throws: Raised in following situations:
     ///
     ///             - The inner object is a 'NULL'.
-    ///             - The inner object is not a numeric.
+    ///             - The inner object is not a string.
     ///
     ///  - Returns: The string value.
     ///
@@ -1016,7 +1017,7 @@ public class VRCTraverse {
     }
     
     ///
-    ///  Get inner object as optional string.
+    ///  Get inner object as an optional string.
     ///
     ///  - Throws: Raised if inner object is not a string.
     ///
@@ -1030,12 +1031,12 @@ public class VRCTraverse {
     }
     
     ///
-    ///  Get inner object as boolean.
+    ///  Get inner object as a boolean.
     ///
     ///  - Throws: Raised in following situations:
     ///
     ///             - The inner object is a 'NULL'.
-    ///             - The inner object is not a numeric.
+    ///             - The inner object is not a boolean.
     ///
     ///  - Returns: The boolean value.
     ///
@@ -1047,9 +1048,9 @@ public class VRCTraverse {
     }
 
     ///
-    ///  Get inner object as optional boolean.
+    ///  Get inner object as an optional boolean.
     ///
-    ///  - Throws: Raised if inner object is not a numeric.
+    ///  - Throws: Raised if inner object is not a boolean.
     ///
     ///  - Returns: The optional boolean value.
     ///
@@ -1063,12 +1064,12 @@ public class VRCTraverse {
     ///
     ///  Get inner object.
     ///
-    ///  - Throws: Raised in the situations:
+    ///  - Throws: Raised iin following situations:
     ///
     ///             - It's not supported for the type.
     ///             - Cannot get value as target type.
     ///
-    ///  - Returns: The value.
+    ///  - Returns: The inner object.
     ///
     public func inner<T>() throws -> T {
         if type(of: T.self) == Int8.Type.self {
