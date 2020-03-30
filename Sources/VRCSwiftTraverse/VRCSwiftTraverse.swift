@@ -237,7 +237,7 @@ public class VRCTraverse {
     }
 
     ///
-    ///  Assume that inner object is a numeric.
+    ///  Check whether inner object is a numeric.
     ///
     ///  - Throws: Raised if inner object is not a numeric.
     ///
@@ -251,7 +251,7 @@ public class VRCTraverse {
     }
     
     ///
-    ///  Assume that inner object is a integer.
+    ///  Check whether inner object is a integer.
     ///
     ///  - Throws: Raised if inner object is not a integer.
     ///
@@ -274,7 +274,7 @@ public class VRCTraverse {
     }
 
     ///
-    ///  Assume that inner object is a boolean.
+    ///  Check whether inner object is a boolean.
     ///
     ///  - Throws: Raised if inner object is not a boolean.
     ///
@@ -288,7 +288,7 @@ public class VRCTraverse {
     }
     
     ///
-    ///  Assume that inner object is a string.
+    ///  Check whether inner object is a string.
     ///
     ///  - Throws: Raised if inner object is not a string.
     ///
@@ -302,7 +302,7 @@ public class VRCTraverse {
     }
     
     ///
-    ///  Assume that inner object is a array.
+    ///  Check whether inner object is a array.
     ///
     ///  - Throws: Raised if inner object is not a array.
     ///
@@ -316,7 +316,7 @@ public class VRCTraverse {
     }
     
     ///
-    ///  Assume that inner object is a directory.
+    ///  Check whether inner object is a directory.
     ///
     ///  - Throws: Raised if inner object is not a directory.
     ///
@@ -402,7 +402,7 @@ public class VRCTraverse {
     }
     
     ///
-    ///  Assume that inner object is not a 'NULL'.
+    ///  Check whether inner object is not a 'NULL'.
     ///
     ///  - Throws: Raised if inner object is a 'NULL'.
     ///
