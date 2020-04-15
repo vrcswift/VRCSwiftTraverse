@@ -14,8 +14,8 @@ let package = Package(
     ],
     dependencies: [
         .package(
-            url: "https://github.com/SwiftyJSON/SwiftyJSON",
-            Package.Dependency.Requirement.branch("master"))
+            url: "https://git-private.xiaojsoft.org/git/vrcswift/mirror-swiftyjson.git",
+            from: "5.0.0")
     ],
     targets: [
         .target(
