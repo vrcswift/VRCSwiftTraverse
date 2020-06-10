@@ -81,7 +81,7 @@ public class VRCTraverse {
     ///    - opt: The JSON serialization reading options. Default is '[]'.
     ///    - path: The path.
     ///
-    init(data: Data,
+    public init(data: Data,
         options: JSONSerialization.ReadingOptions = [],
         path: String = "/") throws {
         //  Build JSON object.
@@ -100,7 +100,7 @@ public class VRCTraverse {
     ///    - object: The JSON object.
     ///    - path: The path.
     ///
-    init(_ object: Any, _ path: String = "/") throws {
+    public init(_ object: Any, _ path: String = "/") throws {
         m_Inner = JSON(object)
         
         //  Check if JSON is invalid.
@@ -123,7 +123,7 @@ public class VRCTraverse {
     ///    - jsonString: The JSON string.
     ///    - path: The path.
     ///
-    init(parseJSON jsonString: String, path: String = "/") throws {
+    public init(parseJSON jsonString: String, path: String = "/") throws {
         m_Inner = JSON(parseJSON: jsonString)
         
         //  Check if JSON is invalid.
