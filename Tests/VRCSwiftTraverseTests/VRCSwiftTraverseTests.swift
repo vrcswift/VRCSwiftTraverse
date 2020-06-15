@@ -21,7 +21,8 @@ final class VRCSwiftTraverseTests: XCTestCase {
             4,
             5
         ],
-        "e": null
+        "e": null,
+        "f": "key0"
     }
     """
 
@@ -80,7 +81,47 @@ final class VRCSwiftTraverseTests: XCTestCase {
                                .notNull()
                                .typeOf(.array)
                                .array()
-                               
+            
+            let fSelectObj = try root.sub("f")
+                                     .notNull()
+                                     .string()
+                                     .selectFromDictionary(
+                                            from: ["key0": 0, "key1": 1])
+                                     .innerAsSInt()
+            
+            XCTAssertEqual(fSelectObj, 0)
+            
+            do {
+                let _ = try root.sub("f")
+                                .notNull()
+                                .string()
+                                .selectFromDictionary(from: ["k": 0])
+                XCTFail()
+            } catch let error as VRCTraverseError {
+                XCTAssertEqual(error.kind, .keyNotFindError)
+            } catch _ {
+                XCTFail()
+            }
+            
+            let fSelectObj2 = try root.sub("f")
+                                      .notNull()
+                                      .string()
+                                      .selectFromDictionaryOptional(
+                                            from: ["key0": 0, "key1": 1],
+                                            defaultValue: -1)
+                                      .innerAsSInt()
+            
+            XCTAssertEqual(fSelectObj2, 0)
+            
+            let fSelectObj3 = try root.sub("f")
+                                      .notNull()
+                                      .string()
+                                      .selectFromDictionaryOptional(
+                                        from: ["k": 0], defaultValue: -1)
+                                      .innerAsSInt()
+            
+            XCTAssertEqual(fSelectObj3, -1)
+            
             var index: Int = 0
             _ = try dobj.arrayForEach({ (item) in
                 _ = try item.notNull().numeric()

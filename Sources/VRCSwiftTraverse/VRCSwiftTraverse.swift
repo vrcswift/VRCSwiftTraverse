@@ -170,6 +170,17 @@ public class VRCTraverse {
     }
     
     ///
+    ///  Get the representation of specified object.
+    ///
+    ///  - Parameter obj: The object.
+    ///
+    ///  - Returns: The representation string.
+    ///
+    private func getObjectRepresentation(_ obj: Any) -> String {
+        return "\(obj)"
+    }
+    
+    ///
     ///  Get the sub path with offset of array.
     ///
     ///  - Parameter offset: The offset of array.
@@ -568,6 +579,67 @@ public class VRCTraverse {
         }
         
         return self
+    }
+    
+    ///
+    ///  Select an item from specific dictionary (use inner object as the key).
+    ///
+    ///  - Throws: Raised in the following situations:
+    ///
+    ///             - The inner object is 'NULL'.
+    ///             - The key doesn't exist.
+    ///
+    ///  - Parameter from: The dictionary.
+    ///
+    ///  - Returns: Traverse object of selected item.
+    ///
+    public func selectFromDictionary<T1, T2>(
+        from: [T1: T2]) throws -> VRCTraverse {
+        
+        //  Get key.
+        let key: T1 = try self.notNull().inner()
+        
+        //  Check key existence.
+        if let val = from[key] {
+            return try VRCTraverse(
+                val, getSubPath(name: getObjectRepresentation(key)))
+        }
+        
+        throw VRCTraverseError(
+            message: "\"key\" does not existed.",
+            kind: .keyNotFindError,
+            path: m_Path)
+    }
+    
+    ///
+    ///  Select an optional item from specific dictionary (inner object as the key).
+    ///
+    ///  - Throws: Raised if the inner object is 'NULL'.
+    ///
+    ///  - Parameters:
+    ///    - from: The dictionary.
+    ///    - defaultValue: The default value when the key doesn't exist.
+    ///
+    ///  - Returns: Traverse object of selected item.
+    ///
+    public func selectFromDictionaryOptional<T1, T2>(
+        from: [T1: T2],
+        defaultValue: T2) throws -> VRCTraverse {
+        
+        do {
+            return try selectFromDictionary(from: from)
+        } catch let error as VRCTraverseError {
+            if error.kind == .keyNotFindError {
+                return try VRCTraverse(
+                    defaultValue,
+                    getSubPath(name:
+                        getObjectRepresentation(m_Inner.rawValue))
+                )
+            }
+            throw error
+        } catch let error {
+            throw error
+        }
     }
 
     ///
