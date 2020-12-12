@@ -101,7 +101,11 @@ public class VRCTraverse {
     ///    - path: The path.
     ///
     public init(_ object: Any, _ path: String = "/") throws {
-        m_Inner = JSON(object)
+        if let traverse = object as? VRCTraverse {
+            m_Inner = JSON(traverse.m_Inner)
+        } else {
+            m_Inner = JSON(object)
+        }
         
         //  Check if JSON is invalid.
         if m_Inner.type == .null {

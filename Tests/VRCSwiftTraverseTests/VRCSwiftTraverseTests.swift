@@ -28,10 +28,11 @@ final class VRCSwiftTraverseTests: XCTestCase {
 
     func testBasic() {
         do {
-            let root = try VRCTraverse.init(parseJSON: str)
+            var root = try VRCTraverse.init(parseJSON: str)
                                       .notNull()
                                       .typeOf(.dictionary)
                                       .directory()
+            root = try VRCTraverse(root)
             let aobj = try root.sub("a")
                                .notNull()
                                .typeOf(.numeric)
