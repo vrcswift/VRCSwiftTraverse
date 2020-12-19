@@ -434,6 +434,15 @@ public class VRCTraverse {
     }
     
     ///
+    ///  Get whether inner object is 'NULL'
+    ///
+    ///  - Returns: True if so.
+    ///
+    public func isNull() -> Bool {
+        return m_Inner.type == .null
+    }
+        
+    ///
     ///  Set minimum value threshold for inner object.
     ///
     ///  - Note:

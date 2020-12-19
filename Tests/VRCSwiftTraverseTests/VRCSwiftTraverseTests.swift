@@ -130,6 +130,7 @@ final class VRCSwiftTraverseTests: XCTestCase {
                 index += 1
             })
             
+            XCTAssertFalse(dobj.isNull())
             XCTAssertEqual(try dobj.arrayGetItem(0).innerAsSInt(), 0)
             XCTAssertEqual(try dobj.arrayGetItem(1).innerAsSInt(), 1)
             XCTAssertEqual(try dobj.arrayGetItem(2).innerAsSInt(), 2)
@@ -137,7 +138,7 @@ final class VRCSwiftTraverseTests: XCTestCase {
             XCTAssertEqual(try dobj.arrayGetItem(4).innerAsSInt(), 4)
             XCTAssertEqual(try dobj.arrayGetItem(5).innerAsSInt(), 5)
             
-            let eobj = try root.optionalSub("e")
+            let eobj = try root.optionalSub("e", defaultValue: nil)
             _ = try eobj.numeric()
                         .integer()
                         .string()
@@ -150,6 +151,7 @@ final class VRCSwiftTraverseTests: XCTestCase {
                         .typeOf(.dictionary)
                         .typeOf(.boolean)
             
+            XCTAssertTrue(eobj.isNull())
             XCTAssertEqual(try eobj.innerAsOptionalSInt8(), nil)
             XCTAssertEqual(try eobj.innerAsOptionalUInt8(), nil)
             XCTAssertEqual(try eobj.innerAsOptionalSInt16(), nil)
