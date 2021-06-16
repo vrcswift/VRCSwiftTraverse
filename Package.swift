@@ -14,7 +14,7 @@ let package = Package(
     ],
     dependencies: [
         .package(
-            url: "https://git-private.xiaojsoft.org/git/vrcswift/mirror-swiftyjson.git",
+            url: "https://github.com/vrcswift/SwiftyJSON.git",
             from: "5.0.0")
     ],
     targets: [
